@@ -1,0 +1,6 @@
+services:
+  api:
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+    volumes:
+      - ./src/main/resources/application-test.yml:/config/application-test.yml
