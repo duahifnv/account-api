@@ -10,4 +10,4 @@ spring:
     show-sql: true
   flyway:
     clean-disabled: false
-    locations: classpath:db/migration, classpath:db/migration/dev
+    locations: classpath:db/migration/base, classpath:db/migration/dev

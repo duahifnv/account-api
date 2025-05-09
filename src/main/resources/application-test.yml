@@ -10,6 +10,5 @@ spring:
     show-sql: true
   flyway:
     clean-disabled: false
-    locations: classpath:db/migration
 server:
   port: ${API_PORT}
