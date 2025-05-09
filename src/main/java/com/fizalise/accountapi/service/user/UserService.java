@@ -73,15 +73,22 @@ public class UserService implements UserDetailsService {
             throw new UserAlreadyExistsException(userDto.phone());
         }
         User persistedUser = userRepository.save(userMapper.toUser(userDto));
-        return initializeUser(persistedUser, userDto);
+        return setUserData(persistedUser, userDto);
     }
 
     @Transactional
-    public User initializeUser(User user, UserDto userDto) {
+    public User setUserData(User user, UserDto userDto) {
+        Set<PhoneData> phones = new HashSet<>();
+        Set<EmailData> emails = new HashSet<>();
+
         PhoneData phoneData = phoneDataService.createUserData(user, userDto.phone());
-        user.setPhones(Set.of(phoneData));
+        phones.add(phoneData);
+        user.setPhones(phones);
+
         EmailData emailData = emailDataService.createUserData(user, userDto.email());
-        user.setEmails(Set.of(emailData));
+        emails.add(emailData);
+        user.setEmails(emails);
+
         return userRepository.save(user);
     }
 

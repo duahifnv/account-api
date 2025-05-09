@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class FlywayConfig {
-    @Profile({"dev", "test"})
+    @Profile("dev")
     @Bean
     public FlywayMigrationStrategy flywayMigrationStrategy() {
         return flyway -> {
