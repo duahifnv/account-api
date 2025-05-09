@@ -46,13 +46,14 @@ class UserServiceIntegrationTests {
     }
 
     @Test
+    @Transactional
     void shouldCreateUser() {
         User created = userService.createUser(userDto);
         assertEquals(userDto.name(), created.getName());
         assertEquals(userDto.dateOfBirth(), created.getDateOfBirth());
         assertTrue(passwordEncoder.matches(userDto.password(), created.getPassword()));
-        assertEquals(userDto.email(), created.getEmails().stream().findFirst().get().getEmail());
-        assertEquals(userDto.phone(), created.getPhones().stream().findFirst().get().getPhone());
+        assertEquals(userDto.email(), getUserFirstEmail(created));
+        assertEquals(userDto.phone(), getUserFirstPhone(created));
         assertEquals(userDto.startBalance(), created.getAccount().getBalance());
     }
 
@@ -67,16 +68,34 @@ class UserServiceIntegrationTests {
         userService.updateUserPhone(authentication, "79991234567", "79991234568");
 
         user = userService.findByUsername(userEmail);
-        String updateUserPhone = getUserFirstPhone(user);
+        String updatedUserPhone = getUserFirstPhone(user);
 
-        assertEquals("79991234568", updateUserPhone);
+        assertEquals("79991234568", updatedUserPhone);
     }
+
+    @Test
+    @Transactional
+    void shouldUpdateUserEmail() {
+        User user = userService.createUser(userDto);
+        String userPhone = getUserFirstPhone(user);
+        String userEmail = getUserFirstEmail(user);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userEmail, user.getPassword());
+        userService.updateUserEmail(authentication, "john@mail.com", "john1@mail.com");
+
+        user = userService.findByUsername(userPhone);
+        String updatedUserEmail = getUserFirstEmail(user);
+
+        assertEquals("john1@mail.com", updatedUserEmail);
+    }
+
     @Transactional
     String getUserFirstEmail(User user) {
         return user.getEmails().stream()
                 .findFirst().orElseThrow(() -> new RuntimeException("Почта не найдена"))
                 .getEmail();
     }
+
     @Transactional
     String getUserFirstPhone(User user) {
         return user.getPhones().stream()

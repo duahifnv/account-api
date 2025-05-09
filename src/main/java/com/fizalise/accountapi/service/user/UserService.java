@@ -107,6 +107,12 @@ public class UserService implements UserDetailsService {
         phoneDataService.updateUserData(user, oldPhone, newPhone);
     }
 
+    @Transactional
+    public void updateUserEmail(Authentication authentication, String oldEmail, String newEmail) {
+        User user = findByUsername(authentication.getName());
+        emailDataService.updateUserData(user, oldEmail, newEmail);
+    }
+
     private PageRequest getPageRequest(Integer size, Integer page) {
         return PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
     }
