@@ -1,6 +1,7 @@
 package com.fizalise.accountapi.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "phone_data")
+@Builder
 public class PhoneData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
