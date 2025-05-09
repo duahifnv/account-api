@@ -1,15 +1,16 @@
-package com.fizalise.accountapi.service;
+package com.fizalise.accountapi.service.user;
 
-import com.fizalise.accountapi.TestcontainersConfiguration;
+import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import com.fizalise.accountapi.dto.UserDto;
 import com.fizalise.accountapi.entity.User;
-import com.fizalise.accountapi.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceIntegrationTests {
     @Autowired
     UserService userService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Test
     void shouldCreateUser() {
         UserDto userDto = UserDto.builder()
@@ -28,12 +31,14 @@ class UserServiceIntegrationTests {
                 .password("password")
                 .email("john@mail.com")
                 .phone("79991234567")
+                .startBalance(BigDecimal.TEN)
                 .build();
         User created = userService.createUser(userDto);
         assertEquals(userDto.name(), created.getName());
         assertEquals(userDto.dateOfBirth(), created.getDateOfBirth());
-        assertNotNull(created.getPassword());
+        assertTrue(passwordEncoder.matches(userDto.password(), created.getPassword()));
         assertEquals(userDto.email(), created.getEmails().stream().findFirst().get().getEmail());
         assertEquals(userDto.phone(), created.getPhones().stream().findFirst().get().getPhone());
+        assertEquals(userDto.startBalance(), created.getAccount().getBalance());
     }
 }

@@ -1,4 +1,4 @@
-package com.fizalise.accountapi.service;
+package com.fizalise.accountapi.service.user;
 
 import com.fizalise.accountapi.dto.UserDto;
 import com.fizalise.accountapi.entity.EmailData;
@@ -8,7 +8,6 @@ import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.repository.UserRepository;
 import com.fizalise.accountapi.service.data.EmailDataService;
 import com.fizalise.accountapi.service.data.PhoneDataService;
-import com.fizalise.accountapi.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
