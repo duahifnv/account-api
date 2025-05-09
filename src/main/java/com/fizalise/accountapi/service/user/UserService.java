@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Optional<User> findByPhone(String phone) {
-        return userRepository.findByEmail(phone);
+        return userRepository.findByPhone(phone);
     }
 
     @Transactional

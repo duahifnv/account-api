@@ -1,14 +1,19 @@
 package com.fizalise.accountapi.service.user;
 
+import com.fizalise.accountapi.repository.UserRepository;
 import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import com.fizalise.accountapi.dto.UserDto;
 import com.fizalise.accountapi.entity.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,12 +25,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 class UserServiceIntegrationTests {
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     UserService userService;
     @Autowired
     PasswordEncoder passwordEncoder;
-    @Test
-    void shouldCreateUser() {
-        UserDto userDto = UserDto.builder()
+    UserDto userDto;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+        userDto = UserDto.builder()
                 .name("John Doe")
                 .dateOfBirth(LocalDate.of(1980, 1, 1))
                 .password("password")
@@ -33,6 +43,10 @@ class UserServiceIntegrationTests {
                 .phone("79991234567")
                 .startBalance(BigDecimal.TEN)
                 .build();
+    }
+
+    @Test
+    void shouldCreateUser() {
         User created = userService.createUser(userDto);
         assertEquals(userDto.name(), created.getName());
         assertEquals(userDto.dateOfBirth(), created.getDateOfBirth());
@@ -40,5 +54,33 @@ class UserServiceIntegrationTests {
         assertEquals(userDto.email(), created.getEmails().stream().findFirst().get().getEmail());
         assertEquals(userDto.phone(), created.getPhones().stream().findFirst().get().getPhone());
         assertEquals(userDto.startBalance(), created.getAccount().getBalance());
+    }
+
+    @Test
+    @Transactional
+    void shouldUpdateUserPhone() {
+        User user = userService.createUser(userDto);
+        String userPhone = getUserFirstPhone(user);
+        String userEmail = getUserFirstEmail(user);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userPhone, user.getPassword());
+        userService.updateUserPhone(authentication, "79991234567", "79991234568");
+
+        user = userService.findByUsername(userEmail);
+        String updateUserPhone = getUserFirstPhone(user);
+
+        assertEquals("79991234568", updateUserPhone);
+    }
+    @Transactional
+    String getUserFirstEmail(User user) {
+        return user.getEmails().stream()
+                .findFirst().orElseThrow(() -> new RuntimeException("Почта не найдена"))
+                .getEmail();
+    }
+    @Transactional
+    String getUserFirstPhone(User user) {
+        return user.getPhones().stream()
+                .findFirst().orElseThrow(() -> new RuntimeException("Телефон не найден"))
+                .getPhone();
     }
 }
