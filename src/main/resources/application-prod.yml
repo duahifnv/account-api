@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://database/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+jwt:
+  secret: ${JWT_SECRET}
+  duration: ${JWT_DURATION}
+server:
+  port: ${API_PORT}
