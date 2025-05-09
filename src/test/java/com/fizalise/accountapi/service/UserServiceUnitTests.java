@@ -6,7 +6,6 @@ import com.fizalise.accountapi.entity.PhoneData;
 import com.fizalise.accountapi.entity.User;
 import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.repository.UserRepository;
-import com.fizalise.accountapi.service.data.DataService;
 import com.fizalise.accountapi.service.data.EmailDataService;
 import com.fizalise.accountapi.service.data.PhoneDataService;
 import com.fizalise.accountapi.service.user.UserService;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTests {
+class UserServiceUnitTests {
     @Mock
     private UserRepository userRepository;
     @Mock
