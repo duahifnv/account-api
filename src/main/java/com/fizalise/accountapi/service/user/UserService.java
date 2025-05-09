@@ -1,6 +1,7 @@
 package com.fizalise.accountapi.service.user;
 
 import com.fizalise.accountapi.dto.UserDto;
+import com.fizalise.accountapi.entity.Account;
 import com.fizalise.accountapi.entity.EmailData;
 import com.fizalise.accountapi.entity.PhoneData;
 import com.fizalise.accountapi.entity.User;
@@ -8,6 +9,7 @@ import com.fizalise.accountapi.exception.UserAlreadyExistsException;
 import com.fizalise.accountapi.exception.UserNotFoundException;
 import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.repository.UserRepository;
+import com.fizalise.accountapi.service.AccountService;
 import com.fizalise.accountapi.service.data.EmailDataService;
 import com.fizalise.accountapi.service.data.PhoneDataService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,8 +25,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class UserService implements UserDetailsService {
     private final PhoneDataService phoneDataService;
     private final UserMapper userMapper;
     private final EmailDataService emailDataService;
+    private final AccountService accountService;
 
     @Transactional
     @Override
@@ -89,12 +95,15 @@ public class UserService implements UserDetailsService {
         emails.add(emailData);
         user.setEmails(emails);
 
+        Account account = accountService.createAccount(user, userDto.startBalance());
+        user.setAccount(account);
+
         return userRepository.save(user);
     }
 
     @Transactional
-    public void updateUserPhone(Principal principal, String oldPhone, String newPhone) {
-        User user = findByUsername(principal.getName());
+    public void updateUserPhone(Authentication authentication, String oldPhone, String newPhone) {
+        User user = findByUsername(authentication.getName());
         phoneDataService.updateUserData(user, oldPhone, newPhone);
     }
 

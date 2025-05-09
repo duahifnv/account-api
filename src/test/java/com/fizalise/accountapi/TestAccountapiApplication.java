@@ -1,5 +1,6 @@
 package com.fizalise.accountapi;
 
+import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import org.springframework.boot.SpringApplication;
 
 public class TestAccountapiApplication {

@@ -6,16 +6,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Mapper(componentModel = "spring", imports = Long.class)
-@Configuration
 public abstract class UserMapper {
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Mapping(target = "password", qualifiedByName = "getEncodedPassword")
-    public abstract User toUser(UserDto requestUser);
+    public abstract User toUser(UserDto userDto);
 
     @Named("getEncodedPassword")
     protected String encodePassword(String password) {
