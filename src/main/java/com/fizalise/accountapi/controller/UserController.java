@@ -92,7 +92,45 @@ public class UserController {
         );
     }
 
-    @PutMapping("/me/update/phone")
+    @PostMapping("/me/phone")
+    @ApiResponses
+    @Operation(
+            summary = "Добавление номера телефона",
+            description = "Добавляет номер телефона для текущего аутентифицированного пользователя",
+            parameters = {
+                    @Parameter(name = "newPhone", description = "Новый номер телефона", required = true,
+                            schema = @Schema(pattern = "^7\\d{10}$", example = "79001234567"))
+            }
+    )
+    public void addCurrentUserPhone(
+            @RequestParam
+            @ValidPhoneNumber(message = "Новый номер должен быть в формате 7XXXXXXXXXX")
+            String newPhone,
+            @Parameter(hidden = true)
+            Authentication authentication) {
+        userService.addUserPhone(authentication, newPhone);
+    }
+
+    @PostMapping("/me/email")
+    @ApiResponses
+    @Operation(
+            summary = "Добавление почты",
+            description = "Добавляет почту для текущего аутентифицированного пользователя",
+            parameters = {
+                    @Parameter(name = "newEmail", description = "Новый email", required = true,
+                            schema = @Schema(type = "string", format = "email", example = "john1.smith@example.com"))
+            }
+    )
+    public void addCurrentUserEmail(
+            @RequestParam
+            @Email(message = "Необходим почтовый формат")
+            String email,
+            @Parameter(hidden = true)
+            Authentication authentication) {
+        userService.addUserEmail(authentication, email);
+    }
+
+    @PutMapping("/me/phone")
     @ApiResponses
     @Operation(
             summary = "Обновление номера телефона",
@@ -116,7 +154,7 @@ public class UserController {
         userService.updateUserPhone(authentication, oldPhone, newPhone);
     }
 
-    @PutMapping("/me/update/email")
+    @PutMapping("/me/email")
     @ApiResponses
     @Operation(
             summary = "Обновление email пользователя",
@@ -137,5 +175,43 @@ public class UserController {
                                        @Parameter(hidden = true)
                                        Authentication authentication) {
         userService.updateUserEmail(authentication, oldEmail, newEmail);
+    }
+
+    @DeleteMapping("/me/phone")
+    @ApiResponses
+    @Operation(
+            summary = "Удаление номера телефона",
+            description = "Удаляет номер телефона текущего аутентифицированного пользователя",
+            parameters = {
+                    @Parameter(name = "phone", description = "Номер телефона", required = true,
+                            schema = @Schema(pattern = "^7\\d{10}$", example = "79001234567"))
+            }
+    )
+    public void deleteCurrentUserPhone(
+            @RequestParam
+            @ValidPhoneNumber(message = "Номер должен быть в формате 7XXXXXXXXXX")
+            String phone,
+            @Parameter(hidden = true)
+            Authentication authentication) {
+        userService.deleteUserPhone(authentication, phone);
+    }
+
+    @DeleteMapping("/me/email")
+    @ApiResponses
+    @Operation(
+            summary = "Удаление почты",
+            description = "Удаляет почту текущего аутентифицированного пользователя",
+            parameters = {
+                    @Parameter(name = "email", description = "email", required = true,
+                            schema = @Schema(type = "string", format = "email", example = "john1.smith@example.com"))
+            }
+    )
+    public void deleteCurrentUserEmail(
+            @RequestParam
+            @Email(message = "Необходим почтовый формат")
+            String email,
+            @Parameter(hidden = true)
+            Authentication authentication) {
+        userService.deleteUserEmail(authentication, email);
     }
 }

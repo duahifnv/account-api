@@ -5,6 +5,7 @@ import com.fizalise.accountapi.entity.Account;
 import com.fizalise.accountapi.entity.EmailData;
 import com.fizalise.accountapi.entity.PhoneData;
 import com.fizalise.accountapi.entity.User;
+import com.fizalise.accountapi.exception.ResourceNotFoundException;
 import com.fizalise.accountapi.exception.UserAlreadyExistsException;
 import com.fizalise.accountapi.exception.UserNotFoundException;
 import com.fizalise.accountapi.mapper.UserMapper;
@@ -13,6 +14,7 @@ import com.fizalise.accountapi.service.AccountService;
 import com.fizalise.accountapi.service.AuthService;
 import com.fizalise.accountapi.service.data.EmailDataService;
 import com.fizalise.accountapi.service.data.PhoneDataService;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -169,13 +171,13 @@ public class UserService implements UserDetailsService {
 
     public String getUserFirstEmail(User user) {
         return user.getEmails().stream()
-                .findFirst().orElseThrow(() -> new RuntimeException("Почта не найдена"))
+                .findFirst().orElseThrow(() -> new ResourceNotFoundException("Почта не найдена"))
                 .getEmail();
     }
 
     public String getUserFirstPhone(User user) {
         return user.getPhones().stream()
-                .findFirst().orElseThrow(() -> new RuntimeException("Телефон не найден"))
+                .findFirst().orElseThrow(() -> new ResourceNotFoundException("Телефон не найден"))
                 .getPhone();
     }
 
@@ -206,6 +208,20 @@ public class UserService implements UserDetailsService {
         User user = findByUsername(authentication.getName());
         emailDataService.updateUserData(user, oldEmail, newEmail);
         log.debug("Обновлена почта пользователя {}: [{}] -> [{}]", authentication.getName(), oldEmail, oldEmail);
+    }
+
+    @Transactional
+    public void deleteUserPhone(Authentication authentication, String phone) {
+        User user = findByUsername(authentication.getName());
+        phoneDataService.deleteUserData(user, phone);
+        log.debug("Удален телефон пользователя {}: {}", authentication.getName(), phone);
+    }
+
+    @Transactional
+    public void deleteUserEmail(Authentication authentication, String email) {
+        User user = findByUsername(authentication.getName());
+        emailDataService.deleteUserData(user, email);
+        log.debug("Удалена почта пользователя {}: {}", authentication.getName(), email);
     }
 
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)

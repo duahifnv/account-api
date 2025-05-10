@@ -51,6 +51,6 @@ public class PhoneDataService extends DataService<PhoneData, PhoneDataRepository
         if (!user.getPhones().contains(phoneData)) {
             throw new ForbiddenException();
         }
-        saveData(phoneData);
+        user.getPhones().remove(phoneData);
     }
 }

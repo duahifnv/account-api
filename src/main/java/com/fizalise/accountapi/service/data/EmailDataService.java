@@ -52,6 +52,6 @@ public class EmailDataService extends DataService<EmailData, EmailDataRepository
         if (!user.getEmails().contains(emailData)) {
             throw new ForbiddenException();
         }
-        saveData(emailData);
+        user.getEmails().remove(emailData);
     }
 }

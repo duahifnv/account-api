@@ -2,6 +2,7 @@ package com.fizalise.accountapi.service.user;
 
 import com.fizalise.accountapi.dto.UserDto;
 import com.fizalise.accountapi.entity.User;
+import com.fizalise.accountapi.exception.ResourceNotFoundException;
 import com.fizalise.accountapi.repository.UserRepository;
 import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import com.fizalise.accountapi.testconfig.UserDtoConfiguration;
@@ -26,8 +27,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Import({TestcontainersConfiguration.class, UserDtoConfiguration.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -113,6 +113,21 @@ class UserServiceIntegrationTests {
         String updatedUserEmail = userService.getUserFirstEmail(user);
 
         assertEquals("john1@mail.com", updatedUserEmail);
+    }
+
+    @Test
+    @Transactional
+    void shouldDeleteUserEmail() {
+        User user = userService.createUser(johnDto);
+        String userPhone = userService.getUserFirstPhone(user);
+        String userEmail = userService.getUserFirstEmail(user);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userEmail, user.getPassword());
+        userService.deleteUserEmail(authentication, "john@mail.com");
+
+        user = userService.findByUsername(userPhone);
+        User finalUser = user;
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUserFirstEmail(finalUser));
     }
 
     @ParameterizedTest
