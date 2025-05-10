@@ -2,6 +2,7 @@ package com.fizalise.accountapi.service;
 
 import com.fizalise.accountapi.entity.Account;
 import com.fizalise.accountapi.entity.User;
+import com.fizalise.accountapi.exception.ResourceNotFoundException;
 import com.fizalise.accountapi.repository.AccountRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,13 @@ import java.time.LocalDateTime;
 public class AccountService {
     private final AccountRepository accountRepository;
     @Value("${account.max-balance-coefficient}")
-    private static final double MAX_BALANCE_COEFFICIENT = 2.07;
+    private double maxBalanceCoefficient;
+
+    public Account getAccountById(Long id) {
+        return accountRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Указанный счет не найден")
+        );
+    }
 
     @Transactional
     public Account createAccount(User user, BigDecimal accountDeposit) {
@@ -29,7 +36,7 @@ public class AccountService {
                 .user(user)
                 .balance(accountDeposit)
                 .maxBalance(accountDeposit.multiply(
-                        BigDecimal.valueOf(MAX_BALANCE_COEFFICIENT))
+                        BigDecimal.valueOf(maxBalanceCoefficient))
                 )
                 .lastBalanceUpdate(LocalDateTime.now())
                 .build();
