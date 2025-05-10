@@ -1,9 +1,9 @@
 package com.fizalise.accountapi.service.user;
 
-import com.fizalise.accountapi.repository.UserRepository;
-import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import com.fizalise.accountapi.dto.UserDto;
 import com.fizalise.accountapi.entity.User;
+import com.fizalise.accountapi.repository.UserRepository;
+import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
