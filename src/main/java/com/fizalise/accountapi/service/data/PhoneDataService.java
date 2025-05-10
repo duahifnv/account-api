@@ -34,7 +34,7 @@ public class PhoneDataService extends DataService<PhoneData, PhoneDataRepository
             throw new ForbiddenException();
         }
         if (repository.existsByPhone(newPhone)) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Телефон уже существует");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Телефон уже существует");
         }
         phoneData.setPhone(newPhone);
         saveData(phoneData);
