@@ -1,5 +1,6 @@
 package com.fizalise.accountapi.service;
 
+import com.fizalise.accountapi.controller.UserController;
 import com.fizalise.accountapi.dto.AuthDto;
 import com.fizalise.accountapi.dto.JwtDto;
 import com.fizalise.accountapi.dto.UserDto;
@@ -9,6 +10,8 @@ import com.fizalise.accountapi.exception.UserNotFoundException;
 import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -16,11 +19,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j(topic = "Сервис аутентификации")
 public record AuthService(JwtService jwtService,
                           UserService userService,
                           UserMapper userMapper,
                           AuthenticationManager authenticationManager) {
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+
     public JwtDto registerNewUser(UserDto userDto) {
         User user = userService.createUser(userDto);
         log.info("Зарегистрирован новый пользователь: {}", user);

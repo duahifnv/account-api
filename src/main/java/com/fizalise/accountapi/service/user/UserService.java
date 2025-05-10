@@ -10,11 +10,14 @@ import com.fizalise.accountapi.exception.UserNotFoundException;
 import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.repository.UserRepository;
 import com.fizalise.accountapi.service.AccountService;
+import com.fizalise.accountapi.service.AuthService;
 import com.fizalise.accountapi.service.data.EmailDataService;
 import com.fizalise.accountapi.service.data.PhoneDataService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,13 +49,13 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j(topic = "Сервис пользователей")
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PhoneDataService phoneDataService;
     private final UserMapper userMapper;
     private final EmailDataService emailDataService;
     private final AccountService accountService;
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Value("${account.increase.coefficient}")
     private double increaseCoefficient;
@@ -139,7 +142,10 @@ public class UserService implements UserDetailsService {
             throw new UserAlreadyExistsException(userDto.phone());
         }
         User persistedUser = userRepository.save(userMapper.toUser(userDto));
-        return setUserData(persistedUser, userDto);
+        log.info("Пользователь без данных добавлен в базу: {}", persistedUser);
+        User augmentedUser = setUserData(persistedUser, userDto);
+        log.info("За пользователем {} закреплены пользовательские данные", augmentedUser.getId());
+        return augmentedUser;
     }
 
     @Transactional
@@ -177,12 +183,14 @@ public class UserService implements UserDetailsService {
     public void updateUserPhone(Authentication authentication, String oldPhone, String newPhone) {
         User user = findByUsername(authentication.getName());
         phoneDataService.updateUserData(user, oldPhone, newPhone);
+        log.debug("Обновлен телефон пользователя {}: [{}] -> [{}]", authentication.getName(), oldPhone, newPhone);
     }
 
     @Transactional
     public void updateUserEmail(Authentication authentication, String oldEmail, String newEmail) {
         User user = findByUsername(authentication.getName());
         emailDataService.updateUserData(user, oldEmail, newEmail);
+        log.debug("Обновлена почта пользователя {}: [{}] -> [{}]", authentication.getName(), oldEmail, oldEmail);
     }
 
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
@@ -195,11 +203,13 @@ public class UserService implements UserDetailsService {
                 continue;
             }
 
+            BigDecimal oldBalance = account.getBalance();
             BigDecimal updatedBalance = getUpdatedBalance(account);
             accountService.updateBalance(account, updatedBalance);
 
             user.setAccount(account);
-            System.out.println("Updated user account: " + user.getAccount());
+            log.debug("Обновлен баланс пользователя {}: [{}] -> [{}]",
+                    user.getName(), oldBalance, updatedBalance);
             saveUser(user);
         }
     }

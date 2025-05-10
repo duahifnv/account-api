@@ -41,7 +41,9 @@ public class AccountService {
                 )
                 .lastBalanceUpdate(LocalDateTime.now())
                 .build();
-        return accountRepository.save(account);
+        Account saved = accountRepository.save(account);
+        log.info("Создан пользовательский счет: {}", saved);
+        return saved;
     }
 
     @Transactional
@@ -52,6 +54,7 @@ public class AccountService {
         account.setBalance(balance);
         account.setLastBalanceUpdate(LocalDateTime.now());
         accountRepository.save(account);
+        log.debug("Обновлен пользовательский счет: {}", account);
     }
 
     @Transactional
@@ -73,7 +76,8 @@ public class AccountService {
 
                 updateBalance(from, fromBalance.subtract(amount));
                 updateBalance(to, toBalance.add(amount));
-                log.info("Перевод на сумму {}$ от {} к {}", amount, from.getUser().getName(), to.getUser().getName());
+                log.info("Осуществлен перевод на сумму {}$ от [{}] к [{}]",
+                        amount, from.getUser().getName(), to.getUser().getName());
             }
         }
     }

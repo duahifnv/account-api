@@ -5,6 +5,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-@Slf4j(topic = "Сервис управления токенами")
 public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.duration}")
     private Duration tokenLifetime;
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     public String extractSubject(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -37,7 +39,7 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getPayload();
-        log.info("Токен {}... прошел валидацию", token.substring(0, 10));
+        log.debug("Токен {}... прошел валидацию", token.substring(0, 10));
         return payload;
     }
 
@@ -54,7 +56,7 @@ public class JwtService {
                 .expiration(expiredDate)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
-        log.info("Токен для {} сгенерирован", user);
+        log.debug("Токен для {} сгенерирован", user);
         return generatedToken;
     }
 }
