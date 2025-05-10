@@ -44,7 +44,6 @@ public class UserController {
 
     @GetMapping("/me")
     @JsonView(Views.Private.class)
-    // todo: исправить отображение accountInfo
     public UserResponseDto getCurrentUser(Authentication authentication) {
         return userMapper.toUserResponseDto(
                 userService.findByUsername(authentication.getName())
