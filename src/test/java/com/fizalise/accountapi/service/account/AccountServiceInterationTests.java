@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
-    "spring.jpa.show-sql=false",
-    "account.increase.interval=999s"
+        "spring.jpa.show-sql=false",
+        "account.increase.interval=999s"
 })
 public class AccountServiceInterationTests {
     @Autowired

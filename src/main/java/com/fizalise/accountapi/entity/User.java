@@ -11,7 +11,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "users")
 @Builder
-@Getter @Setter
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

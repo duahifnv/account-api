@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PhoneDataRepository extends JpaRepository<PhoneData, Long> {
     boolean existsByPhone(String phone);
+
     Optional<PhoneData> findByPhone(String phone);
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,7 +62,7 @@ class UserServiceIntegrationTests {
 
         // then
         List<User> expectedContent = userPage.getContent();
-        List<User> actualContent = userService.findAllUsers(key, value, 2, 0).getContent();
+        List<User> actualContent = userService.findAllUsers(key, value, 2, 0, Sort.by("id")).getContent();
 
         Assertions.assertThat(actualContent)
                 .usingRecursiveComparison()
@@ -77,8 +78,8 @@ class UserServiceIntegrationTests {
         assertEquals(johnDto.name(), created.getName());
         assertEquals(johnDto.dateOfBirth(), created.getDateOfBirth());
         assertTrue(passwordEncoder.matches(johnDto.password(), created.getPassword()));
-        assertEquals(johnDto.email(), getUserFirstEmail(created));
-        assertEquals(johnDto.phone(), getUserFirstPhone(created));
+        assertEquals(johnDto.email(), userService.getUserFirstEmail(created));
+        assertEquals(johnDto.phone(), userService.getUserFirstPhone(created));
         assertEquals(johnDto.accountDeposit(), created.getAccount().getBalance());
     }
 
@@ -86,14 +87,14 @@ class UserServiceIntegrationTests {
     @Transactional
     void shouldUpdateUserPhone() {
         User user = userService.createUser(johnDto);
-        String userPhone = getUserFirstPhone(user);
-        String userEmail = getUserFirstEmail(user);
+        String userPhone = userService.getUserFirstPhone(user);
+        String userEmail = userService.getUserFirstEmail(user);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userPhone, user.getPassword());
         userService.updateUserPhone(authentication, "79991234567", "79991234568");
 
         user = userService.findByUsername(userEmail);
-        String updatedUserPhone = getUserFirstPhone(user);
+        String updatedUserPhone = userService.getUserFirstPhone(user);
 
         assertEquals("79991234568", updatedUserPhone);
     }
@@ -102,14 +103,14 @@ class UserServiceIntegrationTests {
     @Transactional
     void shouldUpdateUserEmail() {
         User user = userService.createUser(johnDto);
-        String userPhone = getUserFirstPhone(user);
-        String userEmail = getUserFirstEmail(user);
+        String userPhone = userService.getUserFirstPhone(user);
+        String userEmail = userService.getUserFirstEmail(user);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userEmail, user.getPassword());
         userService.updateUserEmail(authentication, "john@mail.com", "john1@mail.com");
 
         user = userService.findByUsername(userPhone);
-        String updatedUserEmail = getUserFirstEmail(user);
+        String updatedUserEmail = userService.getUserFirstEmail(user);
 
         assertEquals("john1@mail.com", updatedUserEmail);
     }
@@ -127,7 +128,7 @@ class UserServiceIntegrationTests {
             userService.updateAllAccountBalances();
         }
 
-        String userEmail = getUserFirstEmail(created);
+        String userEmail = userService.getUserFirstEmail(created);
         User updatedUser = userService.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -136,38 +137,24 @@ class UserServiceIntegrationTests {
 
     private static Stream<Arguments> provideBalanceUpdateScenarios() {
         return Stream.of(
-            Arguments.of(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(150),
-                3,
-                BigDecimal.valueOf(133.1)
-            ),
-            Arguments.of(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(120),
-                5,
-                BigDecimal.valueOf(120)
-            ),
-            Arguments.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                2,
-                BigDecimal.valueOf(1210)
-            )
+                Arguments.of(
+                        BigDecimal.valueOf(100),
+                        BigDecimal.valueOf(150),
+                        3,
+                        BigDecimal.valueOf(133.1)
+                ),
+                Arguments.of(
+                        BigDecimal.valueOf(100),
+                        BigDecimal.valueOf(120),
+                        5,
+                        BigDecimal.valueOf(120)
+                ),
+                Arguments.of(
+                        BigDecimal.valueOf(1000),
+                        BigDecimal.valueOf(2000),
+                        2,
+                        BigDecimal.valueOf(1210)
+                )
         );
-    }
-
-    @Transactional
-    String getUserFirstEmail(User user) {
-        return user.getEmails().stream()
-                .findFirst().orElseThrow(() -> new RuntimeException("Почта не найдена"))
-                .getEmail();
-    }
-
-    @Transactional
-    String getUserFirstPhone(User user) {
-        return user.getPhones().stream()
-                .findFirst().orElseThrow(() -> new RuntimeException("Телефон не найден"))
-                .getPhone();
     }
 }

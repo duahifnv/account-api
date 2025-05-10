@@ -22,8 +22,6 @@ public class SecurityConfig {
     private final UserService userService;
     private final AuthorizationFilter authorizationFilter;
     private final PasswordConfig passwordConfig;
-    private final String[] freeResourceUrls = {"/account/*", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
-            "/swagger-resources/**", "/api-docs/**", "/aggregate/**", "/actuator/prometheus"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,8 +29,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(freeResourceUrls).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

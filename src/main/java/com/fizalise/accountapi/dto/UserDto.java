@@ -9,16 +9,16 @@ import java.time.LocalDate;
 
 @Builder
 public record UserDto(
-    @NotBlank
-    String name,
-    @NotNull
-    LocalDate dateOfBirth,
-    @NotBlank
-    String password,
-    @NotBlank
-    String email,
-    @NotBlank
-    String phone,
-    @NotNull
-    BigDecimal accountDeposit) {
+        @NotBlank
+        String name,
+        @NotNull
+        LocalDate dateOfBirth,
+        @NotBlank
+        String password,
+        @NotBlank
+        String email,
+        @NotBlank
+        String phone,
+        @NotNull
+        BigDecimal accountDeposit) {
 }

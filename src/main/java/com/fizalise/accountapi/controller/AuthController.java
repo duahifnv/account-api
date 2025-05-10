@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public JwtDto registerNewUser(@RequestBody UserDto userDto) {
+    public JwtDto registerNewUser(@RequestBody @Valid UserDto userDto) {
         return authService.registerNewUser(userDto);
     }
+
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public JwtDto authorizeUser(@RequestBody @Valid AuthDto authDto) {

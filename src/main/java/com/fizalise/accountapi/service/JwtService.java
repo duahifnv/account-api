@@ -21,13 +21,16 @@ public class JwtService {
     private String secret;
     @Value("${jwt.duration}")
     private Duration tokenLifetime;
-    public String extractUsername(String token) {
+
+    public String extractSubject(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
     public <T> T extractClaim(String token, Function<Claims, T> extractFunction) {
         Claims claims = getAllClaims(token);
         return extractFunction.apply(claims);
     }
+
     private Claims getAllClaims(String token) {
         var payload = Jwts.parser()
                 .setSigningKey(secret)
@@ -37,10 +40,10 @@ public class JwtService {
         log.info("Токен {}... прошел валидацию", token.substring(0, 10));
         return payload;
     }
+
     public String generateToken(User user) {
         // Параметры токена
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + tokenLifetime.toMillis());
         // Собираем токен

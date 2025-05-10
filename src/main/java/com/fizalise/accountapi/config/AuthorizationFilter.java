@@ -1,6 +1,8 @@
 package com.fizalise.accountapi.config;
 
+import com.fizalise.accountapi.entity.User;
 import com.fizalise.accountapi.service.JwtService;
+import com.fizalise.accountapi.service.user.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,12 +27,17 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
     private final JwtService jwtService;
     private final HandlerExceptionResolver resolver;
+    private final UserService userService;
+
     @Autowired
     public AuthorizationFilter(JwtService jwtService,
-                               @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+                               @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver,
+                               UserService userService) {
         this.jwtService = jwtService;
         this.resolver = resolver;
+        this.userService = userService;
     }
+
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -42,7 +49,16 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
             String jwt = authHeader.substring(BEARER_PREFIX.length());
-            var username = jwtService.extractUsername(jwt);
+
+            var tokenSubject = jwtService.extractSubject(jwt);
+            long userId = Long.parseLong(tokenSubject);
+
+            User user = userService.findByIdWithCollections(userId)
+                    .orElseThrow(() -> new JwtException(
+                            "Пользователь с id: %d отсутствует в системе".formatted(userId))
+                    );
+            String username = userService.getUserFirstEmail(user);
+
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
                             username,
@@ -51,7 +67,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                     )
             );
             filterChain.doFilter(request, response);
-        } catch (JwtException | ServletException | IOException e) {
+        } catch (NumberFormatException | JwtException | ServletException | IOException e) {
             resolver.resolveException(request, response, null, e);
         }
     }

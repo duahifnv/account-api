@@ -22,18 +22,20 @@ public class AccountService {
     private final AccountRepository accountRepository;
     @Value("${account.max-balance-coefficient}")
     private static final double MAX_BALANCE_COEFFICIENT = 2.07;
+
     @Transactional
     public Account createAccount(User user, BigDecimal accountDeposit) {
         Account account = Account.builder()
                 .user(user)
                 .balance(accountDeposit)
                 .maxBalance(accountDeposit.multiply(
-                            BigDecimal.valueOf(MAX_BALANCE_COEFFICIENT))
+                        BigDecimal.valueOf(MAX_BALANCE_COEFFICIENT))
                 )
                 .lastBalanceUpdate(LocalDateTime.now())
                 .build();
         return accountRepository.save(account);
     }
+
     @Transactional
     public void updateBalance(Account account, BigDecimal balance) {
         if (balance.compareTo(BigDecimal.ZERO) < 0) {
@@ -43,6 +45,7 @@ public class AccountService {
         account.setLastBalanceUpdate(LocalDateTime.now());
         accountRepository.save(account);
     }
+
     @Transactional
     public void transferMoney(@NotNull Account from, @NotNull Account to, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) < 0) {

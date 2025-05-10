@@ -20,6 +20,7 @@ public class UserDtoConfiguration {
                 .accountDeposit(BigDecimal.valueOf(100))
                 .build();
     }
+
     @Bean
     public UserDto janeDto() {
         return UserDto.builder()

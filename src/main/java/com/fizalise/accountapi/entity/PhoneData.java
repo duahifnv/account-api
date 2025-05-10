@@ -7,7 +7,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "phone_data")
-@Builder @Getter @Setter
+@Builder
+@Getter
+@Setter
 public class PhoneData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

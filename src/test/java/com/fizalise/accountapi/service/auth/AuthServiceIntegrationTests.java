@@ -26,12 +26,14 @@ class AuthServiceIntegrationTests {
     private AuthService authService;
     @Autowired
     private UserDto johnDto;
+
     @BeforeEach
     void registerUser() {
         userRepository.deleteAll();
         JwtDto jwtDto = authService.registerNewUser(johnDto);
         System.out.println("Сгенерированный токен: " + jwtDto);
     }
+
     @Test
     void authenticateUser_success() {
         AuthDto authDto = AuthDto.builder()

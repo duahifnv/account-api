@@ -72,8 +72,8 @@ public class UserService implements UserDetailsService {
     }
 
     public Page<User> findAllUsers(String key, String value,
-                                   @NotNull Integer pageSize, @NotNull Integer pageNumber) {
-        PageRequest pageRequest = getPageRequest(pageSize, pageNumber);
+                                   @NotNull Integer pageSize, @NotNull Integer pageNumber, Sort sort) {
+        PageRequest pageRequest = getPageRequest(pageSize, pageNumber, sort);
         Page<User> page;
         switch (key) {
             case "dateOfBirth" -> {
@@ -106,6 +106,10 @@ public class UserService implements UserDetailsService {
         return findByEmail(username)
                 .or(() -> findByPhone(username))
                 .orElseThrow(() -> new UserNotFoundException(username));
+    }
+
+    public Optional<User> findByIdWithCollections(Long id) {
+        return userRepository.findByIdWithCollections(id);
     }
 
     public Optional<User> findById(Long id) {
@@ -156,6 +160,18 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public String getUserFirstEmail(User user) {
+        return user.getEmails().stream()
+                .findFirst().orElseThrow(() -> new RuntimeException("Почта не найдена"))
+                .getEmail();
+    }
+
+    public String getUserFirstPhone(User user) {
+        return user.getPhones().stream()
+                .findFirst().orElseThrow(() -> new RuntimeException("Телефон не найден"))
+                .getPhone();
+    }
+
     @Transactional
     public void updateUserPhone(Authentication authentication, String oldPhone, String newPhone) {
         User user = findByUsername(authentication.getName());
@@ -192,6 +208,7 @@ public class UserService implements UserDetailsService {
                 ChronoUnit.MILLIS.between(account.getLastBalanceUpdate(), LocalDateTime.now()) >= increaseInterval.toMillis()
         );
     }
+
     private BigDecimal getUpdatedBalance(Account account) {
         BigDecimal updatedBalance = account.getBalance()
                 .multiply(BigDecimal.valueOf(increaseCoefficient));
@@ -199,7 +216,7 @@ public class UserService implements UserDetailsService {
                 updatedBalance : account.getMaxBalance();
     }
 
-    private PageRequest getPageRequest(Integer size, Integer page) {
-        return PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
+    private PageRequest getPageRequest(Integer size, Integer page, Sort sort) {
+        return PageRequest.of(page, size, sort);
     }
 }

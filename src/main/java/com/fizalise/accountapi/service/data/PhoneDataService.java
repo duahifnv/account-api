@@ -15,6 +15,7 @@ public class PhoneDataService extends DataService<PhoneData, PhoneDataRepository
     public PhoneDataService(PhoneDataRepository repository) {
         super(repository);
     }
+
     @Transactional
     @Override
     public PhoneData createUserData(User user, String phone) {
@@ -24,6 +25,7 @@ public class PhoneDataService extends DataService<PhoneData, PhoneDataRepository
                 .build();
         return saveData(phoneData);
     }
+
     @Transactional
     public void updateUserData(User user, String oldPhone, String newPhone) {
         PhoneData phoneData = repository.findByPhone(oldPhone)
@@ -37,6 +39,7 @@ public class PhoneDataService extends DataService<PhoneData, PhoneDataRepository
         phoneData.setPhone(newPhone);
         saveData(phoneData);
     }
+
     @Transactional
     @Override
     public void deleteUserData(User user, String phone) {
