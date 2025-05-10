@@ -19,6 +19,9 @@ public class PhoneDataService extends DataService<PhoneData, PhoneDataRepository
     @Transactional
     @Override
     public PhoneData createUserData(User user, String phone) {
+        if (repository.existsByPhone(phone)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Телефон уже существует");
+        }
         PhoneData phoneData = PhoneData.builder()
                 .user(user)
                 .phone(phone)

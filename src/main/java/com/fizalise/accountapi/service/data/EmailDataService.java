@@ -19,6 +19,9 @@ public class EmailDataService extends DataService<EmailData, EmailDataRepository
     @Transactional
     @Override
     public EmailData createUserData(User user, String email) {
+        if (repository.existsByEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Почта уже существует");
+        }
         EmailData emailData = EmailData.builder()
                 .user(user)
                 .email(email)
@@ -35,7 +38,7 @@ public class EmailDataService extends DataService<EmailData, EmailDataRepository
             throw new ForbiddenException();
         }
         if (repository.existsByEmail(newEmail)) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Почта уже существует");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Почта уже существует");
         }
         emailData.setEmail(newEmail);
         saveData(emailData);

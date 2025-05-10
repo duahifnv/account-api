@@ -3,15 +3,12 @@ package com.fizalise.accountapi.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fizalise.accountapi.dto.UserResponseDto;
 import com.fizalise.accountapi.dto.Views;
-import com.fizalise.accountapi.dto.validation.ValidationErrorResponse;
 import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.service.user.UserService;
 import com.fizalise.accountapi.validation.ValidPhoneNumber;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +34,7 @@ public class UserController {
 
     @GetMapping
     @JsonView(Views.Public.class)
+    @ApiResponses
     @Operation(
             summary = "Получить список пользователей",
             description = "Возвращает список пользователей с пагинацией и фильтрацией",
@@ -62,12 +60,6 @@ public class UserController {
                             example = "name,asc",
                             schema = @Schema(defaultValue = "id,asc")
                     )
-            },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Успешный запрос"),
-                    @ApiResponse(responseCode = "401", description = "Требуется аутентификация"),
-                    @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
-                    @ApiResponse(responseCode = "500", description = "Ошибка на сервере"),
             }
     )
     public List<UserResponseDto> getUsers(
@@ -89,16 +81,10 @@ public class UserController {
 
     @GetMapping("/me")
     @JsonView(Views.Private.class)
+    @ApiResponses
     @Operation(
             summary = "Получить текущего пользователя",
-            description = "Возвращает полную информацию о текущем аутентифицированном пользователе",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Успешный запрос",
-                            content = @Content(schema = @Schema(implementation = UserResponseDto.class))),
-                    @ApiResponse(responseCode = "401", description = "Требуется аутентификация"),
-                    @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
-                    @ApiResponse(responseCode = "500", description = "Ошибка на сервере")
-            }
+            description = "Возвращает полную информацию о текущем аутентифицированном пользователе"
     )
     public UserResponseDto getCurrentUser(Authentication authentication) {
         return userMapper.toUserResponseDto(
@@ -107,6 +93,7 @@ public class UserController {
     }
 
     @PutMapping("/me/update/phone")
+    @ApiResponses
     @Operation(
             summary = "Обновление номера телефона",
             description = "Изменяет номер телефона текущего аутентифицированного пользователя",
@@ -115,14 +102,6 @@ public class UserController {
                             schema = @Schema(pattern = "^7\\d{10}$", example = "79991234567")),
                     @Parameter(name = "newPhone", description = "Новый номер телефона", required = true,
                             schema = @Schema(pattern = "^7\\d{10}$", example = "79001234567"))
-            },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Номер успешно изменен"),
-                    @ApiResponse(responseCode = "400", description = "Невалидные данные",
-                            content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
-                    @ApiResponse(responseCode = "401", description = "Требуется аутентификация"),
-                    @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
-                    @ApiResponse(responseCode = "409", description = "Новый номер уже используется")
             }
     )
     public void updateCurrentUserPhone(
@@ -138,6 +117,7 @@ public class UserController {
     }
 
     @PutMapping("/me/update/email")
+    @ApiResponses
     @Operation(
             summary = "Обновление email пользователя",
             description = "Изменяет email текущего аутентифицированного пользователя",
@@ -146,14 +126,6 @@ public class UserController {
                             schema = @Schema(type = "string", format = "email", example = "john.smith@example.com")),
                     @Parameter(name = "newEmail", description = "Новый email", required = true,
                             schema = @Schema(type = "string", format = "email", example = "john1.smith@example.com"))
-            },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Email успешно изменен"),
-                    @ApiResponse(responseCode = "400", description = "Невалидные данные",
-                            content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
-                    @ApiResponse(responseCode = "401", description = "Требуется аутентификация"),
-                    @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
-                    @ApiResponse(responseCode = "404", description = "Пользователь не найден")
             }
     )
     public void updateCurrentUserEmail(@RequestParam

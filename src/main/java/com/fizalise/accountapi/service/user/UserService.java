@@ -180,6 +180,21 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public void addUserPhone(Authentication authentication, String phone) {
+        User user = findByUsername(authentication.getName());
+        phoneDataService.createUserData(user, phone);
+        log.debug("Добавлен телефон для пользователя {}: [{}]", authentication.getName(), phone);
+    }
+
+    @Transactional
+    public void addUserEmail(Authentication authentication, String email) {
+        User user = findByUsername(authentication.getName());
+        emailDataService.createUserData(user, email);
+        log.debug("Добавлена почта для пользователя {}: [{}]", authentication.getName(), email);
+    }
+
+
+    @Transactional
     public void updateUserPhone(Authentication authentication, String oldPhone, String newPhone) {
         User user = findByUsername(authentication.getName());
         phoneDataService.updateUserData(user, oldPhone, newPhone);
