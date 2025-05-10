@@ -8,7 +8,9 @@ create table users (
 create table accounts (
     id bigserial primary key,
     user_id bigint not null unique references users(id),
-    balance decimal(19, 4) not null default 0
+    balance decimal(19, 4) not null default 0,
+    max_balance decimal(19, 4) not null default 0,
+    last_balance_update timestamp not null default current_timestamp
 );
 
 create table email_data (

@@ -20,5 +20,5 @@ public record UserDto(
     @NotBlank
     String phone,
     @NotNull
-    BigDecimal startBalance) {
+    BigDecimal accountDeposit) {
 }

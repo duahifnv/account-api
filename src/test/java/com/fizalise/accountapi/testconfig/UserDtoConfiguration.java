@@ -4,6 +4,7 @@ import com.fizalise.accountapi.dto.UserDto;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @TestConfiguration
@@ -16,6 +17,7 @@ public class UserDtoConfiguration {
                 .password("password")
                 .email("john@mail.com")
                 .phone("79991234567")
+                .accountDeposit(BigDecimal.valueOf(100))
                 .build();
     }
 }

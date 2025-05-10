@@ -3,7 +3,7 @@ package com.fizalise.accountapi.service.auth;
 import com.fizalise.accountapi.dto.AuthDto;
 import com.fizalise.accountapi.dto.JwtDto;
 import com.fizalise.accountapi.dto.UserDto;
-import com.fizalise.accountapi.service.user.AuthService;
+import com.fizalise.accountapi.service.AuthService;
 import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import com.fizalise.accountapi.testconfig.UserDtoConfiguration;
 import org.junit.jupiter.api.BeforeEach;

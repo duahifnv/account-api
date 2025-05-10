@@ -44,7 +44,7 @@ class UserServiceUnitTests {
                 .password("password")
                 .email("john@mail.com")
                 .phone("79991234567")
-                .startBalance(BigDecimal.TEN)
+                .accountDeposit(BigDecimal.TEN)
                 .build();
         User user = User.builder()
                 .id(1L)
