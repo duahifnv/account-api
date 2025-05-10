@@ -24,9 +24,10 @@ public class AccountService {
     @Value("${account.max-balance-coefficient}")
     private double maxBalanceCoefficient;
 
-    public Account getAccountById(Long id) {
-        return accountRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Указанный счет не найден")
+    public Account getAccountByUser(User user) {
+        return accountRepository.findByUser(user).orElseThrow(
+                () -> new ResourceNotFoundException("Не существует счета для пользователя %s"
+                        .formatted(user.getId()))
         );
     }
 
@@ -72,7 +73,7 @@ public class AccountService {
 
                 updateBalance(from, fromBalance.subtract(amount));
                 updateBalance(to, toBalance.add(amount));
-                log.debug("Перевод {} от {} к {}", amount, from.getUser().getName(), to.getUser().getName());
+                log.info("Перевод на сумму {}$ от {} к {}", amount, from.getUser().getName(), to.getUser().getName());
             }
         }
     }

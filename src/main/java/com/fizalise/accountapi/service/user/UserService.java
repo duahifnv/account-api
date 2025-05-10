@@ -112,8 +112,9 @@ public class UserService implements UserDetailsService {
         return userRepository.findByIdWithCollections(id);
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id.toString()));
     }
 
     public Optional<User> findByEmail(String email) {
