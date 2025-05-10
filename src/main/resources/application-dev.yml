@@ -7,7 +7,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
   flyway:
     clean-disabled: false
     locations: classpath:db/migration/base, classpath:db/migration/dev

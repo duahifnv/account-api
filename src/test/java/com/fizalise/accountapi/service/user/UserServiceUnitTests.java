@@ -1,11 +1,13 @@
 package com.fizalise.accountapi.service.user;
 
 import com.fizalise.accountapi.dto.UserDto;
+import com.fizalise.accountapi.entity.Account;
 import com.fizalise.accountapi.entity.EmailData;
 import com.fizalise.accountapi.entity.PhoneData;
 import com.fizalise.accountapi.entity.User;
 import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.repository.UserRepository;
+import com.fizalise.accountapi.service.AccountService;
 import com.fizalise.accountapi.service.data.EmailDataService;
 import com.fizalise.accountapi.service.data.PhoneDataService;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,8 @@ class UserServiceUnitTests {
     private PhoneDataService phoneDataService;
     @Mock
     private EmailDataService emailDataService;
+    @Mock
+    private AccountService accountService;
     @InjectMocks
     private UserService userService;
 
@@ -59,6 +63,7 @@ class UserServiceUnitTests {
         when(userRepository.save(user)).thenReturn(user);
         when(phoneDataService.createUserData(user, "79991234567")).thenReturn(phoneData);
         when(emailDataService.createUserData(user, "john@mail.com")).thenReturn(emailData);
+        when(accountService.createAccount(user, BigDecimal.TEN)).thenReturn(new Account());
         when(userMapper.toUser(userDto)).thenReturn(user);
 
         User createdUser = userService.createUser(userDto);

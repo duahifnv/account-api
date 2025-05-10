@@ -3,6 +3,7 @@ package com.fizalise.accountapi.service.auth;
 import com.fizalise.accountapi.dto.AuthDto;
 import com.fizalise.accountapi.dto.JwtDto;
 import com.fizalise.accountapi.dto.UserDto;
+import com.fizalise.accountapi.repository.UserRepository;
 import com.fizalise.accountapi.service.AuthService;
 import com.fizalise.accountapi.testconfig.TestcontainersConfiguration;
 import com.fizalise.accountapi.testconfig.UserDtoConfiguration;
@@ -20,11 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ActiveProfiles("test")
 class AuthServiceIntegrationTests {
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private AuthService authService;
     @Autowired
     private UserDto johnDto;
     @BeforeEach
     void registerUser() {
+        userRepository.deleteAll();
         JwtDto jwtDto = authService.registerNewUser(johnDto);
         System.out.println("Сгенерированный токен: " + jwtDto);
     }

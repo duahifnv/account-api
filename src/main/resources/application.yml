@@ -12,3 +12,6 @@ account:
     interval: 30s
     coefficient: 1.1
   max-balance-coefficient: 2.07
+server:
+  servlet:
+    context-path: /api/v1
