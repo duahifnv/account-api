@@ -12,5 +12,3 @@ jwt:
   duration: ${JWT_DURATION}
 server:
   port: ${API_PORT}
-account:
-  increase-interval: 30s

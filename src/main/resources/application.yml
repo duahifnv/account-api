@@ -7,3 +7,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     locations: classpath:db/migration/base
+account:
+  increase:
+    interval: 30s
+    coefficient: 1.1
+  max-balance-coefficient: 2.07

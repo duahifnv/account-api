@@ -5,6 +5,7 @@ import com.fizalise.accountapi.entity.User;
 import com.fizalise.accountapi.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +17,8 @@ import java.time.LocalDateTime;
 @Slf4j
 public class AccountService {
     private final AccountRepository accountRepository;
+    @Value("${account.max-balance-coefficient}")
     private static final double MAX_BALANCE_COEFFICIENT = 2.07;
-
     @Transactional
     public Account createAccount(User user, BigDecimal accountDeposit) {
         Account account = Account.builder()

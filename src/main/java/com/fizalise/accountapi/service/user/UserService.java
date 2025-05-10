@@ -54,8 +54,9 @@ public class UserService implements UserDetailsService {
     private final EmailDataService emailDataService;
     private final AccountService accountService;
 
-    private static final double INCREASE_COEFFICIENT = 1.1;
-    @Value("${account.increase-interval}")
+    @Value("${account.increase.coefficient}")
+    private double increaseCoefficient;
+    @Value("${account.increase.interval}")
     private Duration increaseInterval;
 
     @Transactional
@@ -193,7 +194,7 @@ public class UserService implements UserDetailsService {
     }
     private BigDecimal getUpdatedBalance(Account account) {
         BigDecimal updatedBalance = account.getBalance()
-                .multiply(BigDecimal.valueOf(INCREASE_COEFFICIENT));
+                .multiply(BigDecimal.valueOf(increaseCoefficient));
         return updatedBalance.compareTo(account.getMaxBalance()) <= 0 ?
                 updatedBalance : account.getMaxBalance();
     }
