@@ -177,9 +177,9 @@ public class UserService implements UserDetailsService {
             if (!hasUpdatableState(account)) {
                 continue;
             }
+
             BigDecimal updatedBalance = getUpdatedBalance(account);
-            account.setBalance(updatedBalance);
-            account.setLastBalanceUpdate(LocalDateTime.now());
+            accountService.updateBalance(account, updatedBalance);
 
             user.setAccount(account);
             System.out.println("Updated user account: " + user.getAccount());

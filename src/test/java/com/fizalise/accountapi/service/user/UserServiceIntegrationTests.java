@@ -21,7 +21,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -33,33 +32,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("test")
 class UserServiceIntegrationTests {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    PasswordEncoder passwordEncoder;
-    UserDto userDto;
-    UserDto userDto1;
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserDto johnDto;
+    @Autowired
+    private UserDto janeDto;
 
     @BeforeEach
-    void setUp() {
+    void clearUserRepository() {
         userRepository.deleteAll();
-        userDto = UserDto.builder()
-                .name("John Doe")
-                .dateOfBirth(LocalDate.of(1980, 1, 1))
-                .password("password")
-                .email("john@mail.com")
-                .phone("79991234567")
-                .accountDeposit(BigDecimal.valueOf(100))
-                .build();
-        userDto1 = UserDto.builder()
-                .name("Jane Doe")
-                .dateOfBirth(LocalDate.of(1980, 2, 2))
-                .password("password")
-                .email("jane@mail.com")
-                .phone("79992345678")
-                .accountDeposit(BigDecimal.valueOf(200))
-                .build();
     }
 
     @Test
@@ -69,8 +54,8 @@ class UserServiceIntegrationTests {
 
     void findAllUsersByKeyAndValue(String key, String value) {
         // when
-        User created = userService.createUser(userDto);
-        User created1 = userService.createUser(userDto1);
+        User created = userService.createUser(johnDto);
+        User created1 = userService.createUser(janeDto);
         PageImpl<User> userPage = new PageImpl<>(List.of(created, created1));
 
         // then
@@ -87,19 +72,19 @@ class UserServiceIntegrationTests {
     @Test
     @Transactional
     void shouldCreateUser() {
-        User created = userService.createUser(userDto);
-        assertEquals(userDto.name(), created.getName());
-        assertEquals(userDto.dateOfBirth(), created.getDateOfBirth());
-        assertTrue(passwordEncoder.matches(userDto.password(), created.getPassword()));
-        assertEquals(userDto.email(), getUserFirstEmail(created));
-        assertEquals(userDto.phone(), getUserFirstPhone(created));
-        assertEquals(userDto.accountDeposit(), created.getAccount().getBalance());
+        User created = userService.createUser(johnDto);
+        assertEquals(johnDto.name(), created.getName());
+        assertEquals(johnDto.dateOfBirth(), created.getDateOfBirth());
+        assertTrue(passwordEncoder.matches(johnDto.password(), created.getPassword()));
+        assertEquals(johnDto.email(), getUserFirstEmail(created));
+        assertEquals(johnDto.phone(), getUserFirstPhone(created));
+        assertEquals(johnDto.accountDeposit(), created.getAccount().getBalance());
     }
 
     @Test
     @Transactional
     void shouldUpdateUserPhone() {
-        User user = userService.createUser(userDto);
+        User user = userService.createUser(johnDto);
         String userPhone = getUserFirstPhone(user);
         String userEmail = getUserFirstEmail(user);
 
@@ -115,7 +100,7 @@ class UserServiceIntegrationTests {
     @Test
     @Transactional
     void shouldUpdateUserEmail() {
-        User user = userService.createUser(userDto);
+        User user = userService.createUser(johnDto);
         String userPhone = getUserFirstPhone(user);
         String userEmail = getUserFirstEmail(user);
 
@@ -132,7 +117,7 @@ class UserServiceIntegrationTests {
     @MethodSource("provideBalanceUpdateScenarios")
     @Transactional
     public void balanceUpdateSuccess(BigDecimal initialBalance, BigDecimal maxBalance, int updateCount, BigDecimal expectedBalance) throws InterruptedException {
-        User created = userService.createUser(userDto);
+        User created = userService.createUser(johnDto);
         created.getAccount().setBalance(initialBalance);
         created.getAccount().setMaxBalance(maxBalance);
 

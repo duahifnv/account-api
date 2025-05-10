@@ -1,7 +1,7 @@
 package com.fizalise.accountapi.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,11 +25,11 @@ public class Account {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Positive
+    @PositiveOrZero
     @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal balance;
 
-    @Positive
+    @PositiveOrZero
     @Column(name = "max_balance", nullable = false,
             precision = 19, scale = 4)
     private BigDecimal maxBalance;

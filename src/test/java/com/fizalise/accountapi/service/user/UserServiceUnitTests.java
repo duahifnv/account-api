@@ -32,7 +32,6 @@ class UserServiceUnitTests {
     private PhoneDataService phoneDataService;
     @Mock
     private EmailDataService emailDataService;
-
     @InjectMocks
     private UserService userService;
 

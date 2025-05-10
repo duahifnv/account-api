@@ -13,3 +13,7 @@ jwt:
 account:
   increase:
     interval: 10ms
+logging:
+  level:
+    root: INFO
+    com.fizalise.accountapi: DEBUG

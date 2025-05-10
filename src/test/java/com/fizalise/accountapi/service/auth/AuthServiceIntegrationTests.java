@@ -22,17 +22,17 @@ class AuthServiceIntegrationTests {
     @Autowired
     private AuthService authService;
     @Autowired
-    private UserDto userDto;
+    private UserDto johnDto;
     @BeforeEach
     void registerUser() {
-        JwtDto jwtDto = authService.registerNewUser(userDto);
+        JwtDto jwtDto = authService.registerNewUser(johnDto);
         System.out.println("Сгенерированный токен: " + jwtDto);
     }
     @Test
     void authenticateUser_success() {
         AuthDto authDto = AuthDto.builder()
-                .username(userDto.email())
-                .password(userDto.password())
+                .username(johnDto.email())
+                .password(johnDto.password())
                 .build();
         assertDoesNotThrow(() -> {
             JwtDto jwtDto = authService.authenticateUser(authDto);
