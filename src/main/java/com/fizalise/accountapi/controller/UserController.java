@@ -26,7 +26,6 @@ public class UserController {
 
     @GetMapping
     @JsonView(Views.Public.class)
-    @ResponseStatus(HttpStatus.OK)
     public List<UserResponseDto> getUsers(
             @RequestParam(required = false) String key,
             @RequestParam(required = false) String value,
@@ -45,7 +44,6 @@ public class UserController {
 
     @GetMapping("/me")
     @JsonView(Views.Private.class)
-    @ResponseStatus(HttpStatus.OK)
     // todo: исправить отображение accountInfo
     public UserResponseDto getCurrentUser(Authentication authentication) {
         return userMapper.toUserResponseDto(

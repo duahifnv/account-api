@@ -22,7 +22,6 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
     public JwtDto authorizeUser(@RequestBody @Valid AuthDto authDto) {
         return authService.authenticateUser(authDto);
     }
