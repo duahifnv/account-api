@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -62,6 +63,10 @@ public class UserController {
                     )
             }
     )
+    @Cacheable(
+            value = "users",
+            key = "{#key, #value, #pageable.pageSize, #pageable.pageNumber, #pageable.sort}"
+    )
     public List<UserResponseDto> getUsers(
             @RequestParam(required = false) String key,
             @RequestParam(required = false) String value,
@@ -79,6 +84,7 @@ public class UserController {
         );
     }
 
+    @Cacheable(value = "user", key = "{#authentication.name}")
     @GetMapping("/me")
     @JsonView(Views.Private.class)
     @ApiResponses

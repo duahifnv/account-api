@@ -1,6 +1,7 @@
 package com.fizalise.accountapi.service.user;
 
 import com.fizalise.accountapi.dto.UserDto;
+import com.fizalise.accountapi.dto.UserResponseDto;
 import com.fizalise.accountapi.entity.Account;
 import com.fizalise.accountapi.entity.EmailData;
 import com.fizalise.accountapi.entity.PhoneData;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -76,6 +78,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    @Cacheable(value = "usersData", key = "{#key, #value, #pageSize, #pageNumber, #sort}")
     public Page<User> findAllUsers(String key, String value,
                                    @NotNull Integer pageSize, @NotNull Integer pageNumber, Sort sort) {
         PageRequest pageRequest = getPageRequest(pageSize, pageNumber, sort);

@@ -1,9 +1,11 @@
 package com.fizalise.accountapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
@@ -18,7 +20,8 @@ public record UserResponseDto(
 
         @JsonView(Views.Public.class)
         @Schema(description = "Дата рождения в формате dd.MM.yyyy", example = "01.01.1990")
-        String dateOfBirth,
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        LocalDate dateOfBirth,
 
         @JsonView(Views.Private.class)
         @Schema(description = "Список email-адресов пользователя",

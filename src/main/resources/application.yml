@@ -7,6 +7,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     locations: classpath:db/migration/base
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000 # 10 минут (в ms)
+
 account:
   increase:
     interval: 30s
