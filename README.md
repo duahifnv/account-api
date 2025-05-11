@@ -169,13 +169,13 @@ server:
 5.1. Запустите приложение при помощи плагина сборщика `Maven` (профиль `dev`)
 
 ```shell
-.\mvnw.cmd spring-boot:run -D spring-boot.run.profiles=dev
+./mvnw spring-boot:run -D spring-boot.run.profiles=dev
 ```
 
 5.2. Выполнение всех тестов
 
 ```shell
-.\mvnw.cmd test -D spring-boot.run.profiles=test
+./mvnw test -D spring-boot.run.profiles=test
 ```
 
 > [!NOTE]
