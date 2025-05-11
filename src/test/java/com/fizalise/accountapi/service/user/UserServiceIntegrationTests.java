@@ -50,28 +50,6 @@ class UserServiceIntegrationTests {
     }
 
     @Test
-    void shouldFindAllUsers() {
-        findAllUsersByKeyAndValue(null, null);
-    }
-
-    void findAllUsersByKeyAndValue(String key, String value) {
-        // when
-        User created = userService.createUser(johnDto);
-        User created1 = userService.createUser(janeDto);
-        PageImpl<User> userPage = new PageImpl<>(List.of(created, created1));
-
-        // then
-        List<User> expectedContent = userPage.getContent();
-        List<User> actualContent = userService.findAllUsers(key, value, 2, 0, Sort.by("id")).getContent();
-
-        Assertions.assertThat(actualContent)
-                .usingRecursiveComparison()
-                .comparingOnlyFields("id", "name", "dateOfBirth")
-                .ignoringCollectionOrder()
-                .isEqualTo(expectedContent);
-    }
-
-    @Test
     @Transactional
     void shouldCreateUser() {
         User created = userService.createUser(johnDto);

@@ -21,7 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByDateOfBirthAfter(LocalDate dateOfBirthAfter, Pageable pageable);
 
-    Page<User> findAllByNameLike(String name, Pageable pageable);
+    @Query("SELECT u FROM User u WHERE u.name LIKE CONCAT(:name, '%')")
+    Page<User> findByNameStartingWith(@Param("name") String name, Pageable pageable);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.emails LEFT JOIN FETCH u.phones WHERE u.id = :id")
     Optional<User> findByIdWithCollections(@Param("id") Long id);

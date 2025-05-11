@@ -45,10 +45,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -83,6 +80,9 @@ public class UserService implements UserDetailsService {
                                    @NotNull Integer pageSize, @NotNull Integer pageNumber, Sort sort) {
         PageRequest pageRequest = getPageRequest(pageSize, pageNumber, sort);
         Page<User> page;
+        if (value == null) {
+            return userRepository.findAll(pageRequest);
+        }
         switch (key) {
             case "dateOfBirth" -> {
                 try {
@@ -93,14 +93,18 @@ public class UserService implements UserDetailsService {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неверный формат даты");
                 }
             }
-            case "name" -> page = userRepository.findAllByNameLike(value, pageRequest);
+            case "name" -> page = userRepository.findByNameStartingWith(value, pageRequest);
             case "phone" -> {
-                User user = findByPhone(value).orElse(null);
-                page = new PageImpl<>(List.of(user));
+                List<User> users = findByPhone(value)
+                        .map(List::of)
+                        .orElseGet(List::of);
+                page = new PageImpl<>(users, PageRequest.of(pageNumber, pageSize), users.size());
             }
             case "email" -> {
-                User user = findByEmail(value).orElse(null);
-                page = new PageImpl<>(List.of(user));
+                List<User> users = findByEmail(value)
+                        .map(List::of)
+                        .orElseGet(List::of);
+                page = new PageImpl<>(users, PageRequest.of(pageNumber, pageSize), users.size());
             }
             case null -> page = userRepository.findAll(pageRequest);
             default -> {
@@ -125,7 +129,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException(id.toString()));
     }
 
-    public Optional<User> findByEmail(String email) {
+    public Optional<User>   findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 

@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
@@ -42,6 +44,7 @@ public class AccountController {
         Account userAccount = accountService.getAccountByUser(user);
         Account tranferAccount = accountService.getAccountByUser(transferUser);
 
-        accountService.transferMoney(userAccount, tranferAccount, transferDto.transferAmount());
+        BigDecimal bigDecimalAmount = BigDecimal.valueOf(transferDto.transferAmount());
+        accountService.transferMoney(userAccount, tranferAccount, bigDecimalAmount);
     }
 }

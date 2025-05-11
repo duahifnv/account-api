@@ -84,7 +84,6 @@ public class UserController {
         );
     }
 
-    @Cacheable(value = "user", key = "{#authentication.name}")
     @GetMapping("/me")
     @JsonView(Views.Private.class)
     @ApiResponses
@@ -130,10 +129,10 @@ public class UserController {
     public void addCurrentUserEmail(
             @RequestParam
             @Email(message = "Необходим почтовый формат")
-            String email,
+            String newEmail,
             @Parameter(hidden = true)
             Authentication authentication) {
-        userService.addUserEmail(authentication, email);
+        userService.addUserEmail(authentication, newEmail);
     }
 
     @PutMapping("/me/phone")
