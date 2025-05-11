@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
     volumes:
       - ./src/main/resources/application.yml:/config/application.yml
       - .:/app
@@ -19,7 +21,7 @@ services:
     ports:
       - ${API_PORT}:${API_PORT}
   database:
-    image: postgres:17.2
+    image: postgres:16-alpine
     container_name: accountapi-postgres
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
@@ -29,7 +31,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "15432:5432"
+      - ${POSTGRES_PORT}:5432
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
@@ -39,7 +41,7 @@ services:
     image: redis:7.0-alpine
     container_name: accountapi-redis_cache
     ports:
-      - "6379:6379"
+      - ${REDIS_PORT}:${REDIS_PORT}
     volumes:
       - redis_data:/data
     command: redis-server --save 60 1 --loglevel warning

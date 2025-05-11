@@ -4,4 +4,4 @@ WORKDIR /app
 COPY . /app
 
 EXPOSE 8080
-CMD ["mvn", "test", "spring-boot:run"]
+CMD ["mvn", "spring-boot:run"]

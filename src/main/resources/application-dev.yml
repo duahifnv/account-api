@@ -9,7 +9,6 @@ spring:
       ddl-auto: update
   flyway:
     clean-disabled: false
-    locations: classpath:db/migration/base, classpath:db/migration/dev
   data:
     redis:
       host: localhost

@@ -1,6 +1,5 @@
 package com.fizalise.accountapi.service;
 
-import com.fizalise.accountapi.controller.UserController;
 import com.fizalise.accountapi.dto.AuthDto;
 import com.fizalise.accountapi.dto.JwtDto;
 import com.fizalise.accountapi.dto.UserDto;
@@ -9,7 +8,6 @@ import com.fizalise.accountapi.exception.CustomBadCredentialsException;
 import com.fizalise.accountapi.exception.UserNotFoundException;
 import com.fizalise.accountapi.mapper.UserMapper;
 import com.fizalise.accountapi.service.user.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;

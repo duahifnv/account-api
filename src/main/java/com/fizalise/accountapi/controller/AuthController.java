@@ -18,21 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ApiResponses
-    @Operation(
-            summary = "Регистрация нового пользователя",
-            description = "Создает нового пользователя и возвращает JWT токен",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Данные для регистрации",
-                    required = true
-            )
-    )
-    public JwtDto registerNewUser(@RequestBody @Valid UserDto userDto) {
-        return authService.registerNewUser(userDto);
-    }
-
     @PostMapping("/login")
     @ApiResponses
     @Operation(

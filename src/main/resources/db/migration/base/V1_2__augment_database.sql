@@ -1,7 +1,7 @@
 insert into users (name, date_of_birth, password)
-values ('John Smith', '01.01.1990', '$2a$12$7VkoGBd1knaKAK5ydb1hDu/Em8lGnhjmvExWglVezM/g6BMFAytN.'), /* john0101 */
-       ('Jane Doe', '15.06.1985', '$2a$12$QdAlrXwzAbilBQRI0K3RdOsqYTHPsUvuZljprqLCjSq8NxfxpcN/6'), /* jane1506 */
-       ('Bob Wilson', '30.12.1995', '$2a$12$PHsmKFbWovLgKVUUBASkv.vdnV/MkgqnTXreP1cC8.vTKtTtDAWxe'); /* bob3012 */
+values ('John Smith', TO_DATE('01.01.1990', 'DD.MM.YYYY'), '$2a$12$7VkoGBd1knaKAK5ydb1hDu/Em8lGnhjmvExWglVezM/g6BMFAytN.'), /* john0101 */
+       ('Jane Doe', TO_DATE('15.06.1985', 'DD.MM.YYYY'), '$2a$12$QdAlrXwzAbilBQRI0K3RdOsqYTHPsUvuZljprqLCjSq8NxfxpcN/6'), /* jane1506 */
+       ('Bob Wilson', TO_DATE('30.12.1995', 'DD.MM.YYYY'), '$2a$12$PHsmKFbWovLgKVUUBASkv.vdnV/MkgqnTXreP1cC8.vTKtTtDAWxe'); /* bob3012 */
 
 insert into email_data (user_id, email)
 values (1, 'john.smith@example.com'),
